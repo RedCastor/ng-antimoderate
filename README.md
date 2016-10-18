@@ -7,7 +7,7 @@ Include in directive source from antimoderate ( https://github.com/whackashoe/an
 
 <h4>Installing</h4>
 ```
-bower install git@git__XXX__.git#x.x.x
+bower install ng-antimoderate
 ```
 ```javascript
 angular('yourAngularApp',['ngAntimoderate']);
