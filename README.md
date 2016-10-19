@@ -1,8 +1,8 @@
 ng-antimoderate
 =================
 
-Angular Antimoderate
-Include in directive source from antimoderate ( https://github.com/whackashoe/antimoderate ).
+Angular Antimoderate CSS3 filter. Work with CSS3 object-fit ( https://github.com/bfred-it/object-fit-images )
+Idea from https://github.com/whackashoe/antimoderate but this js work with canvas so the style object-fit not work.
 
 
 <h4>Installing</h4>
