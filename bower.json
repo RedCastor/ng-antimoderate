@@ -1,0 +1,29 @@
+{
+  "name": "ng-antimoderate",
+  "version": "1.0.0",
+  "homepage": "https://redcastor.io",
+  "authors": [
+    "Auban le Grelle"
+  ],
+  "description": "",
+  "license": "MIT",
+  "keywords": [
+    "antimoderate"
+  ],
+  "main": [
+    "dist/ng-antimoderate.js"
+  ],
+  "ignore": [
+    "**/.*",
+    "**/*.txt",
+    ".jscsrc",
+    ".jshintrc",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.5.x"
+  }
+}
