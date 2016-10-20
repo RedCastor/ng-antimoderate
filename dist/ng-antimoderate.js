@@ -6,57 +6,65 @@
             replace: false,
             scope: {
                 ngAntimoderate: "@",
-                ngAntimoderateFilter: "@",
-                ngAntimoderateLoadingClass: "@",
-                ngAntimoderateLoadedClass: "@"
+                filter: "@",
+                transition: "@",
+                loadingClass: "@",
+                loadedClass: "@"
             },
             transclude: false,
             link: function($scope, el, attrs) {
-                var image_element = el[0];
+                var img = el[0];
                 var param = {};
                 var temp_loaded_src = [];
-                param.filter = $scope.ngAntimoderateFilter || "";
-                param.loading_class = $scope.ngAntimoderateLoadingClass || "loading";
-                param.loaded_class = $scope.ngAntimoderateLoadedClass || "loaded";
-                var antimoderate = {
-                    processImage: function(img, idata, filter) {
-                        var idata_img = new Image();
-                        idata_img.onload = function() {
-                            var orig_src = attrs.src;
-                            if (orig_src !== null && orig_src !== "") {
-                                el.removeClass(param.loaded_class);
-                                el.addClass(param.loading_class);
-                                var orig_img = new Image();
-                                orig_img.onload = function() {
-                                    el.removeClass(param.loading_class);
-                                    img.src = orig_src;
-                                    if (filter) {
-                                        img.style.filter = "none ";
-                                    }
-                                    if (angular.isDefined(objectFitImages)) {
-                                        objectFitImages(img);
-                                    }
-                                    el.addClass(param.loaded_class);
-                                    temp_loaded_src.push(image_element.src);
-                                };
-                                orig_img.src = orig_src;
-                            }
-                            if (filter) {
-                                img.style.filter = filter;
-                            }
-                            img.src = idata_img.src;
-                            if (angular.isDefined(objectFitImages)) {
-                                objectFitImages(img);
-                            }
-                        };
-                        idata_img.src = idata;
-                    }
+                param.micro_src = $scope.ngAntimoderate || "";
+                param.filter = $scope.filter || "";
+                param.transition = $scope.transition || "";
+                param.loading_class = $scope.loadingClass || "loading";
+                param.loaded_class = $scope.loadedClass || "loaded";
+                var processImage = function(img_el, idata, param) {
+                    var img = img_el[0];
+                    var idata_img = new Image();
+                    idata_img.onload = function() {
+                        var orig_src = attrs.src;
+                        if (orig_src !== null && orig_src !== "") {
+                            img_el.removeClass(param.loaded_class);
+                            img_el.addClass(param.loading_class);
+                            var orig_img = new Image();
+                            orig_img.onload = function() {
+                                img_el.removeClass(param.loading_class);
+                                img_el.addClass(param.loaded_class);
+                                img.src = orig_src;
+                                temp_loaded_src.push(img.src);
+                                if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
+                                    objectFitImages("img.antimoderate");
+                                }
+                                if (param.transition) {
+                                    img.style.transition = param.transition;
+                                }
+                                if (param.filter) {
+                                    img.style.filter = "none ";
+                                }
+                            };
+                            orig_img.src = orig_src;
+                        }
+                        img.src = idata_img.src;
+                        if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
+                            objectFitImages("img.antimoderate");
+                        }
+                        if (param.filter) {
+                            img.style.filter = param.filter;
+                        }
+                    };
+                    idata_img.src = idata;
                 };
-                if (angular.isDefined(image_element.src)) {
+                if (angular.isDefined(img.src)) {
                     el.addClass("antimoderate");
-                    $scope.$watch("ngAntimoderateSrc", function(value) {
-                        if (temp_loaded_src.indexOf(image_element.src) === -1) {
-                            antimoderate.processImage(image_element, value, param.filter);
+                    if (temp_loaded_src.indexOf(img.src) === -1) {
+                        processImage(el, param.micro_src, param);
+                    }
+                    $scope.$watch("ngAntimoderate", function(value) {
+                        if (temp_loaded_src.indexOf(img.src) === -1) {
+                            processImage(el, value, param);
                         }
                     });
                 }

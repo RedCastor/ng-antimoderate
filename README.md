@@ -15,5 +15,5 @@ angular('yourAngularApp',['ngAntimoderate']);
 
 <h4>Usage/Example</h4>
 ```html
-<img data-ng-src="http://placehold.it/4096x4096" data-ng-antimoderate="http://placehold.it/128x128" ng-antimoderate-filter="blur(3px)" data-ng-antimoderate-loaded-class="loaded" data-ng-antimoderate-loading-class="loading" >
+<img data-ng-src="http://placehold.it/4096x4096" data-ng-antimoderate="http://placehold.it/128x128" data-filter="blur(3px)" data-transition="filter 1s" data-loaded-class="loaded" data-loading-class="loading" >
 ```
