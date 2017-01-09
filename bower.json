@@ -1,16 +1,8 @@
 {
   "name": "ng-antimoderate",
-<<<<<<< HEAD
   "version": "1.0.1",
   "author": "Auban le Grelle <auban@viamonkey.com>",
   "homepage": "https://redcastor.io",
-=======
-  "version": "1.0.0",
-  "homepage": "http://redcastor.io",
-  "authors": [
-    "Auban le Grelle"
-  ],
->>>>>>> c22cefe0896ac5de21d95aa126ead408972da747
   "description": "",
   "license": "MIT",
   "keywords": [
