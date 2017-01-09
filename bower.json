@@ -1,14 +1,13 @@
 {
   "name": "ng-antimoderate",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "author": "Auban le Grelle <auban@viamonkey.com>",
   "homepage": "https://redcastor.io",
-  "authors": [
-    "Auban le Grelle"
-  ],
   "description": "",
   "license": "MIT",
   "keywords": [
-    "antimoderate"
+    "antimoderate",
+    "angular"
   ],
   "main": [
     "dist/ng-antimoderate.js"
