@@ -67,8 +67,6 @@
                                     img.style.overflow = "";
                                 }
 
-                                console.log(img);
-
                             };
 
                             orig_img.src = orig_src;
