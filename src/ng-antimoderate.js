@@ -1,7 +1,7 @@
 (function(angular){
     'use strict';
 
-    angular.module('ngAntimoderate', []).directive('ngAntimoderate', [ function () {
+    angular.module('ngAntimoderate', []).directive('ngAntimoderate', [ '$timeout', function ($timeout) {
         return {
             restrict: "A",
             replace: false,
@@ -10,7 +10,8 @@
                 filter: "@",
                 transition: "@",
                 loadingClass: "@",
-                loadedClass: "@"
+                loadedClass: "@",
+                overflow: "@"
             },
             transclude: false,
             link: function($scope, el, attrs) {
@@ -24,6 +25,7 @@
                 param.transition = $scope.transition || "";
                 param.loading_class = $scope.loadingClass || "loading";
                 param.loaded_class = $scope.loadedClass || "loaded";
+                param.overflow = $scope.overflow !== 'false';
 
                 var processImage = function (img_el, idata, param) {
 
@@ -33,7 +35,7 @@
                     idata_img.onload = function() {
                         var orig_src = attrs.src;
 
-                        if (orig_src !== null && orig_src !== "") {
+                        if (angular.isDefined(orig_src) && orig_src !== null && orig_src !== "") {
 
                             img_el.removeClass(param.loaded_class);
                             img_el.addClass(param.loading_class);
@@ -44,7 +46,11 @@
                                 img_el.removeClass(param.loading_class);
                                 img_el.addClass(param.loaded_class);
 
-                                img.src = orig_src;
+                                //Add Timeout for workaround on IE
+                                $timeout(function () {
+                                    img.src = orig_src;
+                                }, 0);
+
                                 temp_loaded_src.push(img.src);
 
                                 if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
@@ -57,21 +63,34 @@
                                 if (param.filter) {
                                     img.style.filter = "none ";
                                 }
+                                if (param.overflow) {
+                                    img.style.overflow = "";
+                                }
+
+                                console.log(img);
 
                             };
 
                             orig_img.src = orig_src;
                         }
 
-                        img.src = idata_img.src;
+                        //Add Timeout for workaround on IE
+                        $timeout(function () {
+                            img.src = idata_img.src;
+                        }, 0);
+
                         if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
                             objectFitImages('img.antimoderate');
                         }
 
+                        if (param.overflow) {
+                            img.style.overflow = "hidden";
+                        }
                         if (param.filter) {
                             img.style.filter = param.filter;
                         }
                     };
+
                     idata_img.src = idata;
                 };
 
