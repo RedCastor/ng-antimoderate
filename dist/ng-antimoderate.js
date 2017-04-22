@@ -22,7 +22,10 @@
                 param.transition = $scope.transition || "";
                 param.loading_class = $scope.loadingClass || "loading";
                 param.loaded_class = $scope.loadedClass || "loaded";
-                param.overflow = $scope.overflow !== "false";
+                param.overflow = $scope.overflow || true;
+                function toMS(s) {
+                    return parseFloat(s) * (/\ds$/.test(s) ? 1e3 : 1);
+                }
                 var processImage = function(img_el, idata, param) {
                     var img = img_el[0];
                     var idata_img = new Image();
@@ -44,12 +47,14 @@
                                 }
                                 if (param.transition) {
                                     img.style.transition = param.transition;
+                                    $timeout(function() {
+                                        if (param.overflow) {
+                                            img.parentElement.style.overflow = "";
+                                        }
+                                    }, toMS(img.style.transitionDuration));
                                 }
                                 if (param.filter) {
                                     img.style.filter = "none ";
-                                }
-                                if (param.overflow) {
-                                    img.style.overflow = "";
                                 }
                             };
                             orig_img.src = orig_src;
@@ -60,8 +65,10 @@
                         if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
                             objectFitImages("img.antimoderate");
                         }
-                        if (param.overflow) {
-                            img.style.overflow = "hidden";
+                        if (param.transition) {
+                            if (param.overflow) {
+                                img.parentElement.style.overflow = "hidden";
+                            }
                         }
                         if (param.filter) {
                             img.style.filter = param.filter;
