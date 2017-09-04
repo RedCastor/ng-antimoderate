@@ -31,6 +31,11 @@
                 function toMS(s) {
                     return parseFloat(s) * (/\ds$/.test(s) ? 1e3 : 1);
                 }
+                function wrap(toWrap, wrapper) {
+                    wrapper = wrapper || document.createElement("div");
+                    toWrap.parentNode.appendChild(wrapper);
+                    return wrapper.appendChild(toWrap);
+                }
                 function createImage(src) {
                     var img = {
                         image: new Image(),
@@ -44,10 +49,12 @@
                     return image;
                 }
                 function addTransition(img, param) {
-                    if (param.transition) {
-                        if (param.overflow) {
-                            img.parentElement.style.overflow = "hidden";
+                    if (param.transition && param.overflow) {
+                        console.log(img.parentElement.nodeName);
+                        if (img.parentElement.nodeName !== "DIV") {
+                            wrap(img);
                         }
+                        img.parentElement.style.overflow = "hidden";
                     }
                     return img;
                 }

@@ -42,6 +42,20 @@
                 }
 
                 /**
+                 * Wrap Element
+                 *
+                 * @param toWrap
+                 * @param wrapper
+                 * @returns {Node}
+                 */
+                function wrap (toWrap, wrapper) {
+                    wrapper = wrapper || document.createElement('div');
+                    toWrap.parentNode.appendChild(wrapper);
+
+                    return wrapper.appendChild(toWrap);
+                }
+
+                /**
                  * Create a image
                  *
                  * @param temp
@@ -77,10 +91,13 @@
 
                 function addTransition (img, param) {
 
-                    if (param.transition) {
-                        if (param.overflow) {
-                            img.parentElement.style.overflow = "hidden";
+                    if (param.transition && param.overflow) {
+                        console.log(img.parentElement.nodeName);
+                        if (img.parentElement.nodeName !== 'DIV') {
+                            wrap(img);
                         }
+
+                        img.parentElement.style.overflow = "hidden";
                     }
 
                     return img;
