@@ -6,6 +6,8 @@
             replace: false,
             scope: {
                 ngAntimoderate: "@",
+                loadSrc: "@",
+                loadTransitionDelay: "@",
                 filter: "@",
                 transition: "@",
                 loadingClass: "@",
@@ -17,76 +19,141 @@
                 var img = el[0];
                 var param = {};
                 var temp_loaded_src = [];
+                var temp_image = {};
                 param.micro_src = $scope.ngAntimoderate || "";
-                param.filter = $scope.filter || "";
-                param.transition = $scope.transition || "";
-                param.loading_class = $scope.loadingClass || "loading";
-                param.loaded_class = $scope.loadedClass || "loaded";
-                param.overflow = $scope.overflow || true;
+                param.load_src = $scope.loadSrc || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                param.load_delay = parseInt($scope.loadDelay) || 300;
+                param.filter = angular.isDefined($scope.filter) ? $scope.filter : "blur(20px)";
+                param.transition = angular.isDefined($scope.transition) ? $scope.transition : "filter 300ms";
+                param.loading_class = angular.isDefined($scope.loadingClass) ? $scope.loadingClass : "loading";
+                param.loaded_class = angular.isDefined($scope.loadedClass) ? $scope.loadedClass : "loaded";
+                param.overflow = angular.isDefined($scope.overflow) ? $scope.overflow : true;
                 function toMS(s) {
                     return parseFloat(s) * (/\ds$/.test(s) ? 1e3 : 1);
                 }
-                var processImage = function(img_el, idata, param) {
-                    var img = img_el[0];
-                    var idata_img = new Image();
-                    idata_img.onload = function() {
-                        var orig_src = attrs.src;
-                        if (angular.isDefined(orig_src) && orig_src !== null && orig_src !== "") {
-                            img_el.removeClass(param.loaded_class);
-                            img_el.addClass(param.loading_class);
-                            var orig_img = new Image();
-                            orig_img.onload = function() {
-                                img_el.removeClass(param.loading_class);
-                                img_el.addClass(param.loaded_class);
-                                $timeout(function() {
-                                    img.src = orig_src;
-                                }, 0);
-                                temp_loaded_src.push(img.src);
-                                if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
-                                    objectFitImages("img.antimoderate");
-                                }
-                                if (param.transition) {
-                                    img.style.transition = param.transition;
-                                    $timeout(function() {
-                                        if (param.overflow) {
-                                            img.parentElement.style.overflow = "";
-                                        }
-                                    }, toMS(img.style.transitionDuration));
-                                }
-                                if (param.filter) {
-                                    img.style.filter = "none ";
-                                }
-                            };
-                            orig_img.src = orig_src;
+                function createImage(src) {
+                    var img = {
+                        image: new Image(),
+                        src: src
+                    };
+                    img.image.src = src;
+                    return img;
+                }
+                function destroyImage(image) {
+                    image = null;
+                    return image;
+                }
+                function addTransition(img, param) {
+                    if (param.transition) {
+                        if (param.overflow) {
+                            img.parentElement.style.overflow = "hidden";
                         }
+                    }
+                    return img;
+                }
+                function addStyleMicro(img, param) {
+                    if (param.load_delay > 0) {
+                        img.style.opacity = 0;
+                        img.style.transition = "opacity " + param.load_delay + "ms";
+                    }
+                    img.classList.remove(param.loaded_class);
+                    img.classList.add(param.loading_class);
+                    return img;
+                }
+                function applyStyleMicro(img, param) {
+                    if (param.load_delay > 0) {
+                        img.style.transition = "opacity " + param.load_delay + "ms";
+                        img.style.opacity = 1;
                         $timeout(function() {
-                            img.src = idata_img.src;
-                        }, 0);
-                        if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
-                            objectFitImages("img.antimoderate");
+                            img.style.opacity = "";
+                        }, toMS(img.style.transitionDuration));
+                    }
+                    return img;
+                }
+                function addFilter(img, param) {
+                    if (param.filter) {
+                        img.style.filter = param.filter;
+                    }
+                    return img;
+                }
+                function applyTransition(img, param) {
+                    if (param.transition) {
+                        img.style.transition = param.transition;
+                    }
+                    if (param.filter) {
+                        img.style.filter = "none ";
+                    }
+                    $timeout(function() {
+                        if (param.filter) {
+                            img.style.filter = "";
                         }
                         if (param.transition) {
                             if (param.overflow) {
-                                img.parentElement.style.overflow = "hidden";
+                                img.parentElement.style.overflow = "";
                             }
+                            img.style.transition = "";
                         }
-                        if (param.filter) {
-                            img.style.filter = param.filter;
-                        }
-                    };
-                    idata_img.src = idata;
-                };
-                if (angular.isDefined(img.src)) {
-                    el.addClass("antimoderate");
-                    if (temp_loaded_src.indexOf(img.src) === -1) {
-                        processImage(el, param.micro_src, param);
-                    }
-                    $scope.$watch("ngAntimoderate", function(value) {
-                        if (temp_loaded_src.indexOf(img.src) === -1) {
-                            processImage(el, value, param);
-                        }
-                    });
+                    }, toMS(img.style.transitionDuration));
+                    return img;
                 }
+                function setImg(img, src, param) {
+                    img.src = src;
+                    if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
+                        objectFitImages("img.antimoderate");
+                    }
+                    return img;
+                }
+                var processImage = function(img_el, param) {
+                    var img = img_el[0];
+                    temp_image.load = createImage(param.load_src);
+                    temp_image.load.image.onload = function() {
+                        addTransition(img, param);
+                        param.micro_src = param.micro_src.length ? param.micro_src : param.load_src;
+                        temp_image.micro = createImage(param.micro_src);
+                        temp_image.micro.image.onload = function() {
+                            addStyleMicro(img, param);
+                            var micro_timeout = $timeout(function() {
+                                setImg(img, temp_image.micro.src, param);
+                                destroyImage(temp_image.load);
+                                applyStyleMicro(img, param);
+                                addFilter(img, param);
+                            }, param.load_delay > 0 ? param.load_delay / 2 : 0);
+                            temp_image.original = createImage(attrs.src);
+                            temp_image.original.image.onload = function() {
+                                temp_loaded_src.push(img.src);
+                                micro_timeout.then(function() {
+                                    img_el.removeClass(param.loading_class);
+                                    img_el.addClass(param.loaded_class);
+                                    $timeout(function() {
+                                        setImg(img, temp_image.original.src, param);
+                                        destroyImage(temp_image.micro);
+                                        destroyImage(temp_image.original);
+                                        applyTransition(img, param);
+                                    }, 0);
+                                });
+                            };
+                            temp_image.original.image.onerror = function() {
+                                applyTransition(img, param);
+                            };
+                        };
+                        temp_image.micro.image.onerror = function() {
+                            applyStyleMicro(img, param);
+                        };
+                        $timeout(function() {
+                            setImg(img, temp_image.load.src, param);
+                        }, 0);
+                    };
+                };
+                el.addClass("antimoderate");
+                if (temp_loaded_src.indexOf(img.src) === -1) {
+                    processImage(el, param);
+                }
+                $scope.$watch("ngAntimoderate", function(new_val, old_val) {
+                    if (new_val !== old_val && temp_loaded_src.indexOf(img.src) === -1) {
+                        param.micro_src = new_val;
+                        processImage(el, param);
+                    }
+                });
             }
         };
     } ]);
