@@ -9,6 +9,7 @@
                 ngAntimoderate: "@",
                 loadSrc: "@",
                 loadTransitionDelay: "@",
+                errSrc: "@",
                 filter: "@",
                 transition: "@",
                 loadingClass: "@",
@@ -25,6 +26,7 @@
 
                 param.micro_src = $scope.ngAntimoderate || "";
                 param.load_src = $scope.loadSrc || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                param.err_src = $scope.errSrc || param.load_src;
                 param.load_delay = parseInt($scope.loadDelay) || 300; //0 for disable, value ms
                 param.filter = angular.isDefined($scope.filter) ? $scope.filter : "blur(20px)";
                 param.transition = angular.isDefined($scope.transition) ? $scope.transition : "filter 300ms";
@@ -167,6 +169,14 @@
                     return img;
                 }
 
+                function applyClass (img, param) {
+
+                    img.classList.remove(param.loading_class);
+                    img.classList.add(param.loaded_class);
+
+                    return img;
+                }
+
                 function setImg (img, src, param) {
 
                     img.src = src;
@@ -178,6 +188,52 @@
                     return img;
                 }
 
+                function setOriginal( src, param, temp_image, promise) {
+                    //Create Original image
+                    temp_image.original = createImage( src );
+
+                    temp_image.original.image.onload = function() {
+
+                        temp_loaded_src.push(img.src);
+
+                        //Replace by original after promise micro
+                        promise.then(function () {
+
+                            //Add Timeout for workaround on IE
+                            $timeout(function () {
+                                setImg(img, temp_image.original.src, param);
+                                destroyImage(temp_image.micro);
+                                destroyImage(temp_image.original);
+
+                                applyClass(img, param);
+                                applyTransition(img, param);
+                            }, 0);
+                        });
+                    };
+
+                    temp_image.original.image.onerror = function() {
+
+                        temp_image.err = createImage( param.err_src );
+
+                        temp_image.err.image.onload = function() {
+
+                            //Replace by original after timeout micro
+                            promise.then(function () {
+
+                                //Add Timeout for workaround on IE
+                                $timeout(function () {
+                                    setImg(img, temp_image.err.src, param);
+                                    destroyImage(temp_image.micro);
+                                    destroyImage(temp_image.original);
+                                    destroyImage(temp_image.err);
+
+                                    applyClass(img, param);
+                                    applyTransition(img, param);
+                                }, 0);
+                            });
+                        };
+                    };
+                }
 
 
                 var processImage = function (img_el, param) {
@@ -208,39 +264,20 @@
                                 addFilter(img, param);
                             }, param.load_delay > 0 ? param.load_delay / 2 : 0 );
 
-                            //Create Original image
-                            temp_image.original = createImage( attrs.src );
-
-                            temp_image.original.image.onload = function() {
-
-                                temp_loaded_src.push(img.src);
-
-                                //Replace by original after timeout micro
-                                micro_timeout.then(function () {
-
-                                    img_el.removeClass(param.loading_class);
-                                    img_el.addClass(param.loaded_class);
-
-                                    //Add Timeout for workaround on IE
-                                    $timeout(function () {
-                                        setImg(img, temp_image.original.src, param);
-                                        destroyImage(temp_image.micro);
-                                        destroyImage(temp_image.original);
-
-                                        applyTransition(img, param);
-                                    }, 0);
-                                });
-                            };
-
-                            temp_image.original.image.onerror = function() {
-
-                                applyTransition(img, param);
-                            };
+                            setOriginal(attrs.src, param, temp_image, micro_timeout);
                         };
 
                         temp_image.micro.image.onerror = function() {
+                            addStyleMicro(img, param);
 
-                            applyStyleMicro(img, param);
+                            var micro_timeout = $timeout(function () {
+                                destroyImage(temp_image.load);
+
+                                applyStyleMicro(img, param);
+                                addFilter(img, param);
+                            }, 0);
+
+                            setOriginal(attrs.src, param, temp_image, micro_timeout);
                         };
 
                         //Add Timeout for workaround on IE
