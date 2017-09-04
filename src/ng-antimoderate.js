@@ -93,14 +93,11 @@
                 function addTransition (img, param) {
 
                     if (param.transition && param.overflow) {
-                        //if (img.parentElement.nodeName !== 'DIV') {
-                            var wrapper_img = wrap(img);
-                            wrapper_img.classList.add('antimoderate-overflow');
-                            wrapper_img.style.width = '100%';
-                            wrapper_img.style.height = '100%';
-                        //}
-
-                        img.parentElement.style.overflow = "hidden";
+                        var wrapper_img = wrap(img);
+                        wrapper_img.classList.add('antimoderate-overflow');
+                        wrapper_img.style.width = '100%';
+                        wrapper_img.style.height = '100%';
+                        wrapper_img.style.overflow = "hidden";
                     }
 
                     return img;

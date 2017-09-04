@@ -55,7 +55,7 @@
                         wrapper_img.classList.add("antimoderate-overflow");
                         wrapper_img.style.width = "100%";
                         wrapper_img.style.height = "100%";
-                        img.parentElement.style.overflow = "hidden";
+                        wrapper_img.style.overflow = "hidden";
                     }
                     return img;
                 }
