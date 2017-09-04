@@ -50,7 +50,6 @@
                 }
                 function addTransition(img, param) {
                     if (param.transition && param.overflow) {
-                        console.log(img.parentElement.nodeName);
                         if (img.parentElement.nodeName !== "DIV") {
                             wrap(img);
                         }
