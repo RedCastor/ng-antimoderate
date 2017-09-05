@@ -21,9 +21,10 @@
                 var param = {};
                 var temp_loaded_src = [];
                 var temp_image = {};
+                var image_load = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
                 param.micro_src = $scope.ngAntimoderate || "";
-                param.load_src = $scope.loadSrc || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-                param.err_src = $scope.errSrc || param.load_src;
+                param.load_src = $scope.loadSrc || image_load;
+                param.err_src = $scope.errSrc || image_load;
                 param.load_delay = parseInt($scope.loadDelay) || 300;
                 param.filter = angular.isDefined($scope.filter) ? $scope.filter : "blur(20px)";
                 param.transition = angular.isDefined($scope.transition) ? $scope.transition : "filter 300ms";
