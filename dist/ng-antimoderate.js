@@ -1,6 +1,6 @@
 (function(angular) {
     "use strict";
-    angular.module("ngAntimoderate", []).directive("ngAntimoderate", [ "$timeout", function($timeout) {
+    angular.module("ngAntimoderate", []).directive("ngAntimoderate", [ "$timeout", "$window", function($timeout, $window) {
         return {
             restrict: "A",
             replace: false,
@@ -114,7 +114,7 @@
                 }
                 function setImg(img, src, param) {
                     img.src = src;
-                    if (angular.isDefined(objectFitImages) && angular.isFunction(objectFitImages)) {
+                    if (angular.isDefined($window.objectFitImages) && angular.isFunction($window.objectFitImages)) {
                         objectFitImages("img.antimoderate");
                     }
                     return img;
