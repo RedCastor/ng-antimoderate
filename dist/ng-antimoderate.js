@@ -7,13 +7,15 @@
             scope: {
                 ngAntimoderate: "@",
                 loadSrc: "@",
-                loadTransitionDelay: "@",
+                loadDelay: "@",
                 errSrc: "@",
                 filter: "@",
                 transition: "@",
                 loadingClass: "@",
                 loadedClass: "@",
-                overflow: "@"
+                overflow: "@",
+                onSuccess: "&?",
+                onError: "&?"
             },
             transclude: false,
             link: function($scope, el, attrs) {
@@ -130,6 +132,7 @@
                                 destroyImage(temp_image.original);
                                 applyClass(img, param);
                                 applyTransition(img, param);
+                                $scope.onSuccess();
                             }, 0);
                         });
                     };
@@ -144,6 +147,7 @@
                                     destroyImage(temp_image.err);
                                     applyClass(img, param);
                                     applyTransition(img, param);
+                                    $scope.onError();
                                 }, 0);
                             });
                         };

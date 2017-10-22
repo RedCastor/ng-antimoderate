@@ -8,13 +8,15 @@
             scope: {
                 ngAntimoderate: "@",
                 loadSrc: "@",
-                loadTransitionDelay: "@",
+                loadDelay: "@",
                 errSrc: "@",
                 filter: "@",
                 transition: "@",
                 loadingClass: "@",
                 loadedClass: "@",
-                overflow: "@"
+                overflow: "@",
+                onSuccess: "&?",
+                onError: "&?"
             },
             transclude: false,
             link: function($scope, el, attrs) {
@@ -208,6 +210,9 @@
 
                                 applyClass(img, param);
                                 applyTransition(img, param);
+
+                                //Directive Result Success
+                                $scope.onSuccess();
                             }, 0);
                         });
                     };
@@ -230,6 +235,9 @@
 
                                     applyClass(img, param);
                                     applyTransition(img, param);
+
+                                    //Directive Result Error
+                                    $scope.onError();
                                 }, 0);
                             });
                         };
