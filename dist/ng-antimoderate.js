@@ -14,8 +14,8 @@
                 loadingClass: "@",
                 loadedClass: "@",
                 overflow: "@",
-                onSuccess: "&?",
-                onError: "&?"
+                onSuccess: "&",
+                onError: "&"
             },
             transclude: false,
             link: function($scope, el, attrs) {
