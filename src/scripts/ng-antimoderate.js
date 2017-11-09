@@ -1,7 +1,37 @@
 (function(angular){
     'use strict';
 
-    angular.module('ngAntimoderate', []).directive('ngAntimoderate', [ '$timeout', '$window', function ($timeout, $window) {
+    // Load module ng-antimoderate
+    var module = angular.module('ngAntimoderate', []);
+
+    module.provider('$ngAntimoderate', [ function $ngAntimoderateProvider() {
+
+        var default_src = {
+            load: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+            error: undefined
+        };
+
+        this.src = default_src;
+
+        this.$get = [ function() {
+            var src = this.src;
+
+            return {
+                getSrc: function () {
+                    return src;
+                }
+            };
+        }];
+
+        this.setSrc = function(src) {
+            this.src.load = src.load || default_src.load;
+            this.src.error = src.error || default_src.error;
+        };
+
+    }]);
+
+    module.directive('ngAntimoderate', [ '$timeout', '$window', '$ngAntimoderate', function ($timeout, $window, $ngAntimoderate) {
+
         return {
             restrict: "A",
             replace: false,
@@ -21,15 +51,18 @@
             transclude: false,
             link: function($scope, el, attrs) {
 
+                var src = $ngAntimoderate.getSrc();
+
                 var img = el[0];
                 var param = {};
                 var temp_loaded_src = [];
                 var temp_image = {};
-                var image_load = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                var image_load = src.load;
+                var image_err = src.error;
 
                 param.micro_src = $scope.ngAntimoderate || "";
                 param.load_src = $scope.loadSrc || image_load;
-                param.err_src = $scope.errSrc || image_load;
+                param.err_src = $scope.errSrc || image_err || image_load;
                 param.load_delay = parseInt($scope.loadDelay) || 300; //0 for disable, value ms
                 param.filter = angular.isDefined($scope.filter) ? $scope.filter : "blur(20px)";
                 param.transition = angular.isDefined($scope.transition) ? $scope.transition : "filter 300ms";
