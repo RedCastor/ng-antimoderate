@@ -209,6 +209,16 @@
                         }, 0);
                     };
                 };
+                if (!img.src) {
+                    img.src = param.load_src;
+                }
+                img.onload = function() {
+                    $scope.onSuccess();
+                };
+                img.onerror = function() {
+                    setImg(img, param.err_src, param);
+                    $scope.onError();
+                };
                 $timeout(function() {
                     el.addClass("antimoderate");
                     if (temp_loaded_src.indexOf(img.src) === -1) {

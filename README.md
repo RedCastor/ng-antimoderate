@@ -23,6 +23,7 @@ app.config(['$ngAntimoderateProvider', function ($ngAntimoderateProvider) {
 ```
 
 <h4>Usage/Example</h4>
+
 ```html
 <img data-ng-src="http://placehold.it/4096x4096" 
      data-ng-antimoderate="http://placehold.it/128x128" 

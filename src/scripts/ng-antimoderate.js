@@ -69,6 +69,8 @@
                 param.loaded_class = angular.isDefined($scope.loadedClass) ? $scope.loadedClass : "loaded";
                 param.overflow = angular.isDefined($scope.overflow) ? $scope.overflow : true;
 
+
+
                 /**
                  * Convert css timing to milisecond number
                  * @param s
@@ -282,6 +284,7 @@
 
                     //If cached image not process image.
                     if (img.complete) {
+
                         temp_loaded_src.push(img.src);
                         return;
                     }
@@ -331,6 +334,30 @@
                         }, 0);
                     };
                 };
+
+
+
+
+
+
+                //Check image source if set by ng-src
+                if (!img.src) {
+                    img.src = param.load_src;
+                }
+
+
+                img.onload = function() {
+                    //Directive Result Success
+                    $scope.onSuccess();
+                };
+
+                img.onerror = function() {
+                    setImg(img, param.err_src, param);
+
+                    //Directive Result Error
+                    $scope.onError();
+                };
+
 
 
                 //After scope apply run process antimoderate
