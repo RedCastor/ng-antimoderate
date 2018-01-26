@@ -23,7 +23,6 @@
     module.directive("ngAntimoderate", [ "$timeout", "$window", "$ngAntimoderate", function($timeout, $window, $ngAntimoderate) {
         return {
             restrict: "A",
-            replace: false,
             scope: {
                 ngAntimoderate: "@",
                 loadSrc: "@",
@@ -60,7 +59,7 @@
                 }
                 function wrap(toWrap, wrapper) {
                     wrapper = wrapper || document.createElement("div");
-                    toWrap.parentNode.appendChild(wrapper);
+                    toWrap.parentNode.insertBefore(wrapper, toWrap.nextSibling);
                     wrapper.appendChild(toWrap);
                     return wrapper;
                 }
@@ -177,6 +176,10 @@
                 }
                 var processImage = function(img_el, param) {
                     var img = img_el[0];
+                    if (img.complete) {
+                        temp_loaded_src.push(img.src);
+                        return;
+                    }
                     temp_image.load = createImage(param.load_src);
                     temp_image.load.image.onload = function() {
                         addTransition(img, param);
@@ -206,10 +209,12 @@
                         }, 0);
                     };
                 };
-                el.addClass("antimoderate");
-                if (temp_loaded_src.indexOf(img.src) === -1) {
-                    processImage(el, param);
-                }
+                $timeout(function() {
+                    el.addClass("antimoderate");
+                    if (temp_loaded_src.indexOf(img.src) === -1) {
+                        processImage(el, param);
+                    }
+                }, 0, false);
                 $scope.$watch("ngAntimoderate", function(new_val, old_val) {
                     if (new_val !== old_val && temp_loaded_src.indexOf(img.src) === -1) {
                         param.micro_src = new_val;

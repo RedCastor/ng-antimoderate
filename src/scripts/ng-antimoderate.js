@@ -34,7 +34,6 @@
 
         return {
             restrict: "A",
-            replace: false,
             scope: {
                 ngAntimoderate: "@",
                 loadSrc: "@",
@@ -87,8 +86,9 @@
                  * @returns {Node}
                  */
                 function wrap (toWrap, wrapper) {
+
                     wrapper = wrapper || document.createElement('div');
-                    toWrap.parentNode.appendChild(wrapper);
+                    toWrap.parentNode.insertBefore(wrapper, toWrap.nextSibling);
                     wrapper.appendChild(toWrap);
 
                     return wrapper;
@@ -235,7 +235,6 @@
                         //Replace by original after promise micro
                         promise.then(function () {
 
-                            //Add Timeout for workaround on IE
                             $timeout(function () {
                                 setImg(img, temp_image.original.src, param);
                                 destroyImage(temp_image.micro);
@@ -259,7 +258,6 @@
                             //Replace by original after timeout micro
                             promise.then(function () {
 
-                                //Add Timeout for workaround on IE
                                 $timeout(function () {
                                     setImg(img, temp_image.err.src, param);
                                     destroyImage(temp_image.micro);
@@ -281,6 +279,12 @@
                 var processImage = function (img_el, param) {
 
                     var img = img_el[0];
+
+                    //If cached image not process image.
+                    if (img.complete) {
+                        temp_loaded_src.push(img.src);
+                        return;
+                    }
 
                     //Create micro image
                     temp_image.load = createImage( param.load_src );
@@ -322,20 +326,26 @@
                             setOriginal(attrs.src, param, temp_image, micro_timeout);
                         };
 
-                        //Add Timeout for workaround on IE
                         $timeout(function () {
                             setImg(img, temp_image.load.src, param);
                         }, 0);
                     };
                 };
 
-                el.addClass("antimoderate");
 
-                if (temp_loaded_src.indexOf(img.src) === -1) {
-                    processImage(el, param);
-                }
+                //After scope apply run process antimoderate
+                $timeout(function () {
+                    el.addClass("antimoderate");
+
+                    if (temp_loaded_src.indexOf(img.src) === -1) {
+                        processImage(el, param);
+                    }
+
+                }, 0, false);
+
 
                 $scope.$watch("ngAntimoderate", function(new_val, old_val) {
+
                     if (new_val !== old_val && temp_loaded_src.indexOf(img.src) === -1) {
                         param.micro_src = new_val;
                         processImage(el, param);

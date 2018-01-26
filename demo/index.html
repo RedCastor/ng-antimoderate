@@ -1,0 +1,118 @@
+<!doctype html>
+<html class="no-js" lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Angular Directive Wrapper for Unite Gallery.</title>
+
+    <link type="text/css" rel="stylesheet" href="dist/styles/foundation.css"/>
+    <link type="text/css" rel="stylesheet" href="dist/styles/main.css"/>
+
+    <script type="text/javascript" src="dist/scripts/es6-shim.js"></script>
+    <script type="text/javascript" src="dist/scripts/jquery.js"></script>
+    <script type="text/javascript" src="dist/scripts/angular.js"></script>
+    <script type="text/javascript" src="dist/scripts/angular-foundation-6.js"></script>
+
+    <script type="text/javascript" src="../dist/ng-antimoderate.js"></script>
+    <script type="text/javascript" src="dist/scripts/main.js"></script>
+
+    <script type="text/javascript">
+        'use strict';
+
+        var app = angular.module('app', ['ngAntimoderate', 'mm.foundation', 'ngAnimate']);
+
+        app.config(['$ngAntimoderateProvider', function ($ngAntimoderateProvider) {
+            $ngAntimoderateProvider.setSrc( {
+                error: '../dist/images/not-found-02.svg'
+            });
+        }]);
+    </script>
+</head>
+
+<body data-ng-app="app" >
+<!--[if lt IE 9]>
+<div class="alert alert-warning browserupgrade">
+    You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.
+</div>
+<![endif]-->
+
+<header class="container-fluid header-main">
+    <div class="row">
+        <div class="small-12">
+            <div class="text-center">
+                <h1 class="page-header">NG-ANTIMODERATE</h1>
+                <h3>AngularJS Antimoderate CSS3 filter with fallback image.. Work with CSS3 object-fit ( https://github.com/bfred-it/object-fit-images )</h3>
+                <a class="button large hollow default" href="https://github.com/RedCastor/ng-antimoderate"><i class="fa fa-github"></i>&nbsp;&nbsp;View on GitHub</a>
+                <a class="button large hollow default" href="https://github.com/RedCastor/ng-antimoderate/releases"><i class="fa fa-download"></i>&nbsp;&nbsp;Download</a>
+                <h5 class="version"><small>Currently v1.1.6</small></h5>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <section class="row">
+        <div class="columns small-12 medium-12">
+            <img
+                    data-ng-src="dist/images/bmw.jpg"
+                    data-ng-antimoderate="dist/images/bmw-96x64.jpg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+        <div class="columns small-12 medium-12">
+            <img
+                    data-ng-src="dist/images/buick.jpg"
+                    data-ng-antimoderate="dist/images/buick-96x64.jpg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+        <div class="columns small-12 medium-12">
+            <img
+                    src="dist/images/loco.jpg"
+                    data-ng-antimoderate="dist/images/loco-96x65.jpg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+        <div class="columns small-12 medium-12">
+            <img
+                    src="dist/images/mining-excavator.jpg"
+                    data-ng-antimoderate="dist/images/mining-excavator-96x64.jpg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+        <div class="columns small-12 medium-12">
+            <img
+                    data-ng-src="dist/images/bmw3.jpg"
+                    data-ng-antimoderate="dist/images/bmw-96x64.jpg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+        <div class="columns small-12 medium-12">
+            <img
+                    data-ng-src="dist/images/bmw3.jpg"
+                    data-ng-antimoderate="dist/images/bmw3-96x64.jpg"
+                    data-err-src="../dist/images/not-found-01.svg"
+                    data-load-delay="500"
+                    data-filter="blur(10px)"
+                    data-transition="filter 500ms"
+                    class="fit fit-cover"
+            >
+        </div>
+    </section>
+</main>
+</body>
+</html>
