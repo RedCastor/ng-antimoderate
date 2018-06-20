@@ -53,6 +53,7 @@
                 var src = $ngAntimoderate.getSrc();
 
                 var img = el[0];
+                var img_display = img.style.display;
                 var param = {};
                 var temp_loaded_src = [];
                 var temp_image = {};
@@ -226,6 +227,14 @@
                     return img;
                 }
 
+
+                function setImgErr (img, src, param) {
+
+                    img.srcset = src;
+
+                    return setImg(img, src, param);
+                }
+
                 function setOriginal( src, param, temp_image, promise) {
                     //Create Original image
                     temp_image.original = createImage( src );
@@ -261,7 +270,7 @@
                             promise.then(function () {
 
                                 $timeout(function () {
-                                    setImg(img, temp_image.err.src, param);
+                                    setImgErr(img, temp_image.err.src, param);
                                     destroyImage(temp_image.micro);
                                     destroyImage(temp_image.original);
                                     destroyImage(temp_image.err);
@@ -284,6 +293,12 @@
 
                     //If cached image not process image.
                     if (img.complete) {
+                        img.style.display = img_display;
+
+                        //Set error image
+                        if (img.naturalWidth === 0) {
+                            setImgErr(img, param.err_src, param);
+                        }
 
                         temp_loaded_src.push(img.src);
                         return;
@@ -339,20 +354,24 @@
 
 
 
+                //Set not display before load
+                el.addClass("antimoderate");
+                img.style.display = 'none';
 
                 //Check image source if set by ng-src
                 if (!img.src) {
                     img.src = param.load_src;
                 }
 
-
                 img.onload = function() {
+                    img.style.display = img_display;
                     //Directive Result Success
                     $scope.onSuccess();
                 };
 
                 img.onerror = function() {
-                    setImg(img, param.err_src, param);
+                    img.style.display = img_display;
+                    setImgErr(img, param.err_src, param);
 
                     //Directive Result Error
                     $scope.onError();
@@ -362,7 +381,6 @@
 
                 //After scope apply run process antimoderate
                 $timeout(function () {
-                    el.addClass("antimoderate");
 
                     if (temp_loaded_src.indexOf(img.src) === -1) {
                         processImage(el, param);

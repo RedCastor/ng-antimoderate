@@ -7,9 +7,11 @@ Idea from (https://github.com/whackashoe/antimoderate).
 **[Demo][]**
 
 <h4>Installing</h4>
+
 ```
 bower install ng-antimoderate
 ```
+
 ```javascript
 var app = angular('yourAngularApp',['ngAntimoderate']);
 

@@ -40,6 +40,7 @@
             link: function($scope, el, attrs) {
                 var src = $ngAntimoderate.getSrc();
                 var img = el[0];
+                var img_display = img.style.display;
                 var param = {};
                 var temp_loaded_src = [];
                 var temp_image = {};
@@ -142,6 +143,10 @@
                     }
                     return img;
                 }
+                function setImgErr(img, src, param) {
+                    img.srcset = src;
+                    return setImg(img, src, param);
+                }
                 function setOriginal(src, param, temp_image, promise) {
                     temp_image.original = createImage(src);
                     temp_image.original.image.onload = function() {
@@ -162,7 +167,7 @@
                         temp_image.err.image.onload = function() {
                             promise.then(function() {
                                 $timeout(function() {
-                                    setImg(img, temp_image.err.src, param);
+                                    setImgErr(img, temp_image.err.src, param);
                                     destroyImage(temp_image.micro);
                                     destroyImage(temp_image.original);
                                     destroyImage(temp_image.err);
@@ -177,6 +182,10 @@
                 var processImage = function(img_el, param) {
                     var img = img_el[0];
                     if (img.complete) {
+                        img.style.display = img_display;
+                        if (img.naturalWidth === 0) {
+                            setImgErr(img, param.err_src, param);
+                        }
                         temp_loaded_src.push(img.src);
                         return;
                     }
@@ -209,18 +218,21 @@
                         }, 0);
                     };
                 };
+                el.addClass("antimoderate");
+                img.style.display = "none";
                 if (!img.src) {
                     img.src = param.load_src;
                 }
                 img.onload = function() {
+                    img.style.display = img_display;
                     $scope.onSuccess();
                 };
                 img.onerror = function() {
-                    setImg(img, param.err_src, param);
+                    img.style.display = img_display;
+                    setImgErr(img, param.err_src, param);
                     $scope.onError();
                 };
                 $timeout(function() {
-                    el.addClass("antimoderate");
                     if (temp_loaded_src.indexOf(img.src) === -1) {
                         processImage(el, param);
                     }
