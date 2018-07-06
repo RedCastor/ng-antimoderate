@@ -183,7 +183,7 @@
                     var img = img_el[0];
                     if (img.complete) {
                         img.style.display = img_display;
-                        if (img.naturalWidth === 0) {
+                        if (img.naturalWidth === 0 && !img.getAttribute("data-ofi-src") || img.clientWidth === 0 || img.clientHeight === 0) {
                             setImgErr(img, param.err_src, param);
                         }
                         temp_loaded_src.push(img.src);

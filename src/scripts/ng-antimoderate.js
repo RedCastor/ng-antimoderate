@@ -295,8 +295,7 @@
                     if (img.complete) {
                         img.style.display = img_display;
 
-                        //Set error image
-                        if (img.naturalWidth === 0) {
+                        if ((img.naturalWidth === 0 && !img.getAttribute('data-ofi-src')) || img.clientWidth === 0 || img.clientHeight === 0) {
                             setImgErr(img, param.err_src, param);
                         }
 
@@ -371,6 +370,7 @@
 
                 img.onerror = function() {
                     img.style.display = img_display;
+
                     setImgErr(img, param.err_src, param);
 
                     //Directive Result Error
